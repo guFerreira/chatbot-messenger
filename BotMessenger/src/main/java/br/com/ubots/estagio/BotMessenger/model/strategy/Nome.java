@@ -1,8 +1,8 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
-public class Nome implements IResposta {
+public class Nome implements IResponse {
     @Override
-    public String construirMensagem() {
+    public String buildMessage() {
         return "O meu nome é Gustavo.";
     }
 }

@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RequestMessageResposta {
+public class PostMessageResponse {
     private String message_type;
     private Recipient recipient;
-    private RequestMessage message;
+    private PostMessage message;
 }

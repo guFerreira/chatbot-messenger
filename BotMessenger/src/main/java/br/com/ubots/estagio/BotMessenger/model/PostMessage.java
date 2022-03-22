@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class RequestMessage {
+public class PostMessage {
     private String text;
 }
