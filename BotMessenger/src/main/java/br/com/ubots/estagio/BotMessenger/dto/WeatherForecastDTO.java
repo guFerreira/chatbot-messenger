@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WeatherForecastDTO {
+    private String name;
     @JsonProperty("main")
     private TemperatureDTO temperature;
     @JsonProperty("weather")

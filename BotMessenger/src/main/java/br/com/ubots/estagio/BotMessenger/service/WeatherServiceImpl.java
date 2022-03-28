@@ -34,10 +34,9 @@ public class WeatherServiceImpl implements WeatherService{
 
     private LinkedMultiValueMap<String, String> buildParametersToSearchByCity(String cityName){
         LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<String, String>();
-        System.out.println(        this.formatCityNameToAddAsParameter(cityName));
         params.set("q", this.formatCityNameToAddAsParameter(cityName));
-        params.set("appid", KEY_API_WEATHER);
         params.set("lang","pt_br");
+        params.set("appid", KEY_API_WEATHER);
 
         return params;
     }
