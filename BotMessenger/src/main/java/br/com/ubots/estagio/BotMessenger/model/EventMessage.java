@@ -14,4 +14,11 @@ public class EventMessage {
     private String timestamp;
     private Message message;
     private Sender sender;
+
+    public String getTextMessage(){
+        return this.message.getText();
+    }
+    public String getSenderId(){
+        return this.sender.getId();
+    }
 }

@@ -3,7 +3,6 @@ package br.com.ubots.estagio.BotMessenger.service;
 import br.com.ubots.estagio.BotMessenger.dto.WeatherForecastDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 

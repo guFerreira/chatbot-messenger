@@ -28,9 +28,8 @@ public class MessageController {
 
     @PostMapping("/webhook")
     public ResponseEntity receiveMessageFromUser(@RequestBody EventRequest request){
-        String receivedMessage = request.getEntry().get(0)
-                .getMessaging().get(0).getMessage().getText();
-        String senderId = request.getEntry().get(0).getMessaging().get(0).getSender().getId();
+        String receivedMessage = request.getTextMessage();
+        String senderId = request.getSenderId();
 
         this.messageService.sendMessage(senderId, receivedMessage);
         return ResponseEntity.status(HttpStatus.OK).body(WebhookEventStatus.EVENT_RECEIVED);

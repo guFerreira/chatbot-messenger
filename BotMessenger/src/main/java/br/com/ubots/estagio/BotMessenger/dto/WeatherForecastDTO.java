@@ -19,4 +19,8 @@ public class WeatherForecastDTO {
     @JsonProperty("weather")
     private List<WeatherDTO> weathers;
 
+    public String getWeatherDescription(){
+        return this.weathers.get(0).getDescription();
+    }
+
 }
