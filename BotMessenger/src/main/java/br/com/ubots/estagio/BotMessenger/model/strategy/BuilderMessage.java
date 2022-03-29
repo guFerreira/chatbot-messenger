@@ -11,7 +11,7 @@ public class BuilderMessage {
     public BuilderMessage(String receivedMessage) {
         this.responses.add(new Idade());
         this.responses.add(new Nome());
-        //this.responses.add(new Weather(receivedMessage));
+        this.responses.add(new Weather(receivedMessage));
 
         this.callback = new Incompreendido();
         this.receivedMessage = receivedMessage;
