@@ -17,13 +17,6 @@ public class MessageServiceImpl implements MessageService {
     @Value("${FB_MSG_URL}")
     private String facebookUrlApi;
 
-    WeatherService weatherService;
-
-
-    public MessageServiceImpl(WeatherService weatherService) {
-        this.weatherService = weatherService;
-    }
-
     @Override
     public void sendMessage(String senderId, String receivedMessage) {
         RestTemplate restTemplate = new RestTemplate();

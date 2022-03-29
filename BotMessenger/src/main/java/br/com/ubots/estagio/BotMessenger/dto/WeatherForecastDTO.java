@@ -22,5 +22,8 @@ public class WeatherForecastDTO {
     public String getWeatherDescription(){
         return this.weathers.get(0).getDescription();
     }
+    public float getTemperatureInKelvin(){
+        return this.temperature.getMeasureInKelvin();
+    }
 
 }

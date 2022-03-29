@@ -9,7 +9,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 
-@Service
+//@Service
 public class WeatherServiceImpl implements WeatherService{
     private static final String KEY_API_WEATHER = "104c57d8872e686e7b50663e6d63183d";
     private static final String URL_API_WEATHER_FORECAST = "https://api.openweathermap.org/data/2.5/weather";
@@ -53,10 +53,5 @@ public class WeatherServiceImpl implements WeatherService{
     private String replaceSpacesToPlus(String cityName){
         return cityName.replace(" ", "+");
     }
-
-    private float transformKelvinToCelsius(float temperatureInKelvin){
-        return temperatureInKelvin - 273f;
-    }
-
 
 }

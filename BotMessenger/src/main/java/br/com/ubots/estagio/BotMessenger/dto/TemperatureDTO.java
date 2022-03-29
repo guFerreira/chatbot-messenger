@@ -11,8 +11,5 @@ import lombok.NoArgsConstructor;
 public class TemperatureDTO {
     @JsonProperty("temp")
     private float measureInKelvin;
-    @JsonProperty("feels_like")
-    private float humanPerceptionOfWeather;
-    private int humidity;
 
 }
