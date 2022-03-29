@@ -6,7 +6,6 @@ import br.com.ubots.estagio.BotMessenger.service.WeatherServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,8 +30,17 @@ public class Weather implements Response{
     }
 
     private String extractCityNameByReceivedMessage(String receivedMessage){
-        //TODO implementar a lógica de extrair o nome da cidade.
-        return "São Paulo";
+        //TODO refinar a implementação desse método.
+        String regexIntents = "^[.]*[\\w\\s]*(cidade de|em|no) ([\\s\\w]{3,})[\\?]*";
+        Pattern pattern = Pattern.compile(regexIntents);
+        Matcher matcher = pattern.matcher(receivedMessage);
+        String extratedCity = "";
+        if(matcher.find()){
+            extratedCity = matcher.group(2);
+            System.out.println(extratedCity);
+        }
+
+        return extratedCity;
     }
 
 
