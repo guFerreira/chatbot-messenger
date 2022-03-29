@@ -4,9 +4,15 @@ public class Incompreendido implements Response {
 
     @Override
     public String buildMessage() {
-        return "Eu não entendo muitas coisas ainda, tente perguntar sobre minha IDADE ou NOME :)";
+        return "Desculpa, eu não entendi o que foi falado."+this.getEmojiThink()+"\n" +
+                "Tente perguntar algo sobre sobre meu nome, minha idade ou" +
+                " a previsão do tempo em uma cidade específica, " +
+                "ficarei feliz em te ajudar! :D";
     }
 
+    private String getEmojiThink(){
+        return "\uD83E\uDD14";
+    }
     @Override
     public boolean verifyIntents(String message) {
         return false;

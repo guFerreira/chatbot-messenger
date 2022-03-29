@@ -24,14 +24,21 @@ public class Weather implements Response{
     @Override
     public String buildMessage() {
         String cityName = this.extractCityNameByReceivedMessage(this.receivedMessage);
-        WeatherForecastDTO weatherForecastDTO = this.weatherService.getWeatherForecastByCityName(cityName);
+        try{
+            WeatherForecastDTO weatherForecastDTO = this.weatherService.getWeatherForecastByCityName(cityName);
+            return this.buildWeatherForecastMessage(weatherForecastDTO);
+        }catch (Exception e){
+            return this.buildCallBackCityNotFound(cityName);
+        }
 
-        return this.buildWeatherForecastMessage(weatherForecastDTO);
+    }
+    private String buildCallBackCityNotFound(String cityName){
+        return "A cidade \""+cityName+"\" informada não foi encontrada," +
+                " verifique se escreveu o nome da forma correta! :)";
     }
 
     private String extractCityNameByReceivedMessage(String receivedMessage){
-        //TODO refinar a implementação desse método.
-        String regexIntents = "^[.]*[\\w\\s]*(cidade de|em|no) ([\\s\\w]{3,})[\\?]*";
+        String regexIntents = "^[.]*[\\w\\s,À-úçÇ]*(cidade de|em|no) ([\\s\\w,À-úçÇ]{3,})[\\?\\.\\!]*";
         Pattern pattern = Pattern.compile(regexIntents);
         Matcher matcher = pattern.matcher(receivedMessage);
         String extratedCity = "";
@@ -39,29 +46,34 @@ public class Weather implements Response{
             extratedCity = matcher.group(2);
             System.out.println(extratedCity);
         }
-
         return extratedCity;
     }
-
 
     private String buildWeatherForecastMessage(WeatherForecastDTO weatherForecastDTO){
         String cityName = weatherForecastDTO.getName();
         String weatherDescription = weatherForecastDTO.getWeatherDescription();
         float temperatureInCelsius = this.transformKelvinToCelsius(weatherForecastDTO.getTemperatureInKelvin());
-        return "A cidade "+ cityName +" está com o clima " +
-                weatherDescription + ". A temperatura atual está em " +
-                temperatureInCelsius + " graus Celsius.";
+        return "Na cidade "+ cityName +", o clima atual é: " +
+                weatherDescription + ".\nA temperatura atual está em " +
+                this.formatTemperature(temperatureInCelsius) + "°C. "+ this.getEmojiThermometer();
     }
 
     private float transformKelvinToCelsius(float temperatureInKelvin){
         return temperatureInKelvin - 273f;
     }
 
+    private String formatTemperature(float temperatureInCelsius){
+        String temperature = String.format("%.2f", temperatureInCelsius);
+        return temperature.replace(".",",");
+    }
+
+    private String getEmojiThermometer(){
+        return "\uD83C\uDF21";
+    }
+
     @Override
     public boolean verifyIntents(String message) {
-        String regexIntents = "^([\\w\\sáàâãéèêíïóôõöúçñ]*)(clima|tempo|temperatura|)[\\w\\s]*(cidade de|em|no|cidade do) [\\s\\wáàâãéèêíïóôõöúçñ]{3,}";
-        Pattern pattern = Pattern.compile(regexIntents);
-        Matcher matcher = pattern.matcher(message);
-        return matcher.find();
+        String regexIntents = "^([\\w\\s,À-úçÇ]*)(clima|tempo|temperatura|)[\\w,À-úçÇ\\s]*(cidade de|em|no|cidade do) [\\s\\w,À-úçÇ]{3,}[\\?\\.\\!]*";
+        return Pattern.matches(regexIntents,message);
     }
 }
