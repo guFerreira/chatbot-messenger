@@ -1,4 +1,4 @@
-package br.com.ubots.estagio.BotMessenger.dto;
+package br.com.ubots.estagio.BotMessenger.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -12,12 +12,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WeatherForecastDTO {
-    private String name;
+public class WeatherForecast {
+    @JsonProperty("name")
+    private String cityName;
     @JsonProperty("main")
-    private TemperatureDTO temperature;
+    private Temperature temperature;
     @JsonProperty("weather")
-    private List<WeatherDTO> weathers;
+    private List<Weather> weathers;
 
     public String getWeatherDescription(){
         return this.weathers.get(0).getDescription();
