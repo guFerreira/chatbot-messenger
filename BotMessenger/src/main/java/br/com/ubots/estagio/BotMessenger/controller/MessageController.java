@@ -2,11 +2,11 @@ package br.com.ubots.estagio.BotMessenger.controller;
 
 import br.com.ubots.estagio.BotMessenger.model.EventRequest;
 import br.com.ubots.estagio.BotMessenger.model.WebhookEventStatus;
-import br.com.ubots.estagio.BotMessenger.service.TokenService;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import br.com.ubots.estagio.BotMessenger.service.MessageService;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
 
 @RestController
 public class MessageController {

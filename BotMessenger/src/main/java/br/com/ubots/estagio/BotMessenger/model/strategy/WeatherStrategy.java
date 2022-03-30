@@ -1,7 +1,7 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
-import br.com.ubots.estagio.BotMessenger.dto.WeatherForecastDTO;
-import br.com.ubots.estagio.BotMessenger.service.WeatherService;
+import br.com.ubots.estagio.BotMessenger.model.WeatherForecast;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import br.com.ubots.estagio.BotMessenger.service.WeatherServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Weather implements Response{
+public class WeatherStrategy implements MessageCreationStrategy {
     private String receivedMessage;
     private WeatherService weatherService = new WeatherServiceImpl();
 
-    public Weather(String receivedMessage) {
+    public WeatherStrategy(String receivedMessage) {
         this.receivedMessage = receivedMessage;
     }
 
@@ -25,16 +25,10 @@ public class Weather implements Response{
     public String buildMessage() {
         String cityName = this.extractCityNameByReceivedMessage(this.receivedMessage);
         try{
-            WeatherForecastDTO weatherForecastDTO = this.weatherService.getWeatherForecastByCityName(cityName);
-            return this.buildWeatherForecastMessage(weatherForecastDTO);
+            return this.createCityWeatherForecastMessage(cityName);
         }catch (Exception e){
-            return this.buildCallBackCityNotFound(cityName);
+            return this.buildFallBackCityNotFound(cityName);
         }
-
-    }
-    private String buildCallBackCityNotFound(String cityName){
-        return "A cidade \""+cityName+"\" informada não foi encontrada," +
-                " verifique se escreveu o nome da forma correta! :)";
     }
 
     private String extractCityNameByReceivedMessage(String receivedMessage){
@@ -44,13 +38,18 @@ public class Weather implements Response{
         String extratedCity = "";
         if(matcher.find()){
             extratedCity = matcher.group(2);
-            System.out.println(extratedCity);
         }
         return extratedCity;
     }
 
-    private String buildWeatherForecastMessage(WeatherForecastDTO weatherForecastDTO){
-        String cityName = weatherForecastDTO.getName();
+    private String createCityWeatherForecastMessage(String cityName){
+        WeatherForecast weatherForecastDTO = this.weatherService
+                .getWeatherForecastByCityName(cityName);
+        return this.buildWeatherForecastMessage(weatherForecastDTO);
+    }
+
+    private String buildWeatherForecastMessage(WeatherForecast weatherForecastDTO){
+        String cityName = weatherForecastDTO.getCityName();
         String weatherDescription = weatherForecastDTO.getWeatherDescription();
         float temperatureInCelsius = this.transformKelvinToCelsius(weatherForecastDTO.getTemperatureInKelvin());
         return "Na cidade "+ cityName +", o clima atual é: " +
@@ -69,6 +68,11 @@ public class Weather implements Response{
 
     private String getEmojiThermometer(){
         return "\uD83C\uDF21";
+    }
+
+    private String buildFallBackCityNotFound(String cityName){
+        return "A cidade \""+cityName+"\" informada não foi encontrada," +
+                " verifique se escreveu o nome da forma correta! :)";
     }
 
     @Override

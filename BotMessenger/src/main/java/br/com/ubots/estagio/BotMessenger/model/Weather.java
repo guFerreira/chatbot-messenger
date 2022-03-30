@@ -1,4 +1,4 @@
-package br.com.ubots.estagio.BotMessenger.dto;
+package br.com.ubots.estagio.BotMessenger.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TemperatureDTO {
-    @JsonProperty("temp")
-    private float measureInKelvin;
-
+public class Weather {
+    @JsonProperty("main")
+    private String name;
+    private String description;
 }
