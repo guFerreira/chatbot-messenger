@@ -1,4 +1,4 @@
-package br.com.ubots.estagio.BotMessenger.model;
+package br.com.ubots.estagio.BotMessenger.dto;
 
 import lombok.*;
 
@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Builder
-public class PostMessage {
+public class PostMessageDTO {
     private String text;
 }
