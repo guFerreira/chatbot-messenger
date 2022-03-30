@@ -2,7 +2,7 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 
 import java.util.regex.Pattern;
 
-public class Idade implements Response {
+public class AgeStrategy implements MessageCreationStrategy {
 
     @Override
     public String buildMessage() {

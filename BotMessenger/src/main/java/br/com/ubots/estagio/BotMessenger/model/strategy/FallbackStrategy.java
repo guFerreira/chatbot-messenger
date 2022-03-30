@@ -1,6 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
-public class Incompreendido implements Response {
+public class FallbackStrategy implements MessageCreationStrategy {
 
     @Override
     public String buildMessage() {
@@ -13,8 +13,10 @@ public class Incompreendido implements Response {
     private String getEmojiThink(){
         return "\uD83E\uDD14";
     }
+
     @Override
     public boolean verifyIntents(String message) {
         return false;
     }
+
 }
