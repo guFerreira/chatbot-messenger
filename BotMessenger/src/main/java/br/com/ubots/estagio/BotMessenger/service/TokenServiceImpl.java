@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
+import br.com.ubots.estagio.BotMessenger.service.interfaces.TokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

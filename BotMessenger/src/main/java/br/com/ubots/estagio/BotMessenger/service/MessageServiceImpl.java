@@ -1,7 +1,10 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
+import br.com.ubots.estagio.BotMessenger.dto.PostMessageDTO;
+import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.model.strategy.*;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,16 +23,15 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void sendMessage(String senderId, String receivedMessage) {
         RestTemplate restTemplate = new RestTemplate();
-        PostMessageResponse messageResponse = PostMessageResponse
+        PostMessageResponseDTO messageResponse = PostMessageResponseDTO
                 .builder()
-                .message_type("message")
+                .messageType("message")
                 .recipient(new Recipient(senderId))
-                .message(new PostMessage(this.buildResponse(receivedMessage)))
+                .message(new PostMessageDTO(this.buildResponse(receivedMessage)))
                 .build();
 
-        restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponse.class);
+        restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
     }
-
 
     private String buildResponse(String receivedMessage){
         String message = receivedMessage.toLowerCase(Locale.ROOT);
