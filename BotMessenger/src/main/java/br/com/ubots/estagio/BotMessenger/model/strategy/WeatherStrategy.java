@@ -27,7 +27,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
         try{
             return this.createCityWeatherForecastMessage(cityName);
         }catch (Exception e){
-            return this.buildFallBackCityNotFound(cityName);
+            return this.buildFallBackMessageWhenCityNotFound(cityName);
         }
     }
 
@@ -70,7 +70,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
         return "\uD83C\uDF21";
     }
 
-    private String buildFallBackCityNotFound(String cityName){
+    private String buildFallBackMessageWhenCityNotFound(String cityName){
         return "A cidade \""+cityName+"\" informada não foi encontrada," +
                 " verifique se escreveu o nome da forma correta! :)";
     }
