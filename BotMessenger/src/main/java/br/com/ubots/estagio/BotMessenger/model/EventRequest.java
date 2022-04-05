@@ -12,4 +12,15 @@ import java.util.List;
 public class EventRequest {
     private String object = "page";
     private List<Entry> entry;
+
+    public String getTextMessage(){
+        return this.entry.get(0).getTextMessage();
+
+    }
+
+    public String getSenderId(){
+        return this.entry.get(0).getSenderId();
+    }
+
+
 }

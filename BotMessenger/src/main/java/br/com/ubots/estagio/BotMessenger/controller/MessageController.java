@@ -1,18 +1,19 @@
 package br.com.ubots.estagio.BotMessenger.controller;
 
 import br.com.ubots.estagio.BotMessenger.model.EventRequest;
-import br.com.ubots.estagio.BotMessenger.service.ITokenService;
+import br.com.ubots.estagio.BotMessenger.model.WebhookEventStatus;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.TokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import br.com.ubots.estagio.BotMessenger.service.IMessageService;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
 
 @RestController
 public class MessageController {
-    private final IMessageService messageService;
-    private final ITokenService tokenService;
+    private final MessageService messageService;
+    private final TokenService tokenService;
 
-    public MessageController(IMessageService messageService, ITokenService tokenService) {
+    public MessageController(MessageService messageService, TokenService tokenService) {
         this.messageService = messageService;
         this.tokenService = tokenService;
     }
@@ -22,16 +23,15 @@ public class MessageController {
         if(this.tokenService.verifyToken(token)){
             return ResponseEntity.ok(challenge);
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Token");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(WebhookEventStatus.INVALID_TOKEN);
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity post(@RequestBody EventRequest request){
-        String receivedMessage = request.getEntry().get(0)
-                .getMessaging().get(0).getMessage().getText();
-        String idSender = request.getEntry().get(0).getMessaging().get(0).getSender().getId();
+    public ResponseEntity receiveMessageFromUser(@RequestBody EventRequest request){
+        String receivedMessage = request.getTextMessage();
+        String senderId = request.getSenderId();
 
-        this.messageService.sendResponse(idSender, receivedMessage);
-        return ResponseEntity.status(HttpStatus.OK).body("EVENT_RECEIVED");
+        this.messageService.sendMessage(senderId, receivedMessage);
+        return ResponseEntity.status(HttpStatus.OK).body(WebhookEventStatus.EVENT_RECEIVED);
     }
 }
