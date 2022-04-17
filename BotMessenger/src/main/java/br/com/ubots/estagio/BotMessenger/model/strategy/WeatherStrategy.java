@@ -3,12 +3,10 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 import br.com.ubots.estagio.BotMessenger.model.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import br.com.ubots.estagio.BotMessenger.service.WeatherServiceImpl;
+import com.google.cloud.dialogflow.v2.QueryResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Data
 @NoArgsConstructor
@@ -22,8 +20,8 @@ public class WeatherStrategy implements MessageCreationStrategy {
     }
 
     @Override
-    public String buildMessage() {
-        String cityName = this.extractCityNameByReceivedMessage(this.receivedMessage);
+    public String buildMessage(QueryResult queryResult) {
+        String cityName = this.extractCityNameByReceivedMessage(queryResult);
         try{
             return this.createCityWeatherForecastMessage(cityName);
         }catch (Exception e){
@@ -31,15 +29,9 @@ public class WeatherStrategy implements MessageCreationStrategy {
         }
     }
 
-    private String extractCityNameByReceivedMessage(String receivedMessage){
-        String regexIntents = "^[.]*[\\w\\s,À-úçÇ]*(cidade de|em|no) ([\\s\\w,À-úçÇ]{3,})[\\?\\.\\!]*";
-        Pattern pattern = Pattern.compile(regexIntents);
-        Matcher matcher = pattern.matcher(receivedMessage);
-        String extratedCity = "";
-        if(matcher.find()){
-            extratedCity = matcher.group(2);
-        }
-        return extratedCity;
+    private String extractCityNameByReceivedMessage(QueryResult queryResult){
+        return queryResult.getParameters().getFieldsMap().get("location")
+                .getStructValue().getFieldsMap().get("city").getStringValue();
     }
 
     private String createCityWeatherForecastMessage(String cityName){
@@ -77,7 +69,6 @@ public class WeatherStrategy implements MessageCreationStrategy {
 
     @Override
     public boolean verifyIntents(String message) {
-        String regexIntents = "^([\\w\\s,À-úçÇ]*)(clima|tempo|temperatura|)[\\w,À-úçÇ\\s]*(cidade de|em|no|cidade do) [\\s\\w,À-úçÇ]{3,}[\\?\\.\\!]*";
-        return Pattern.matches(regexIntents,message);
+        return message.equals("#Clima");
     }
 }

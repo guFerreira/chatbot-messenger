@@ -27,15 +27,15 @@ public class MessageServiceImpl implements MessageService {
                 .builder()
                 .messageType("message")
                 .recipient(new Recipient(senderId))
-                .message(new PostMessageDTO(this.buildResponse(receivedMessage)))
+                .message(new PostMessageDTO(this.buildResponse(receivedMessage, senderId)))
                 .build();
 
         restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
     }
 
-    private String buildResponse(String receivedMessage){
+    private String buildResponse(String receivedMessage, String senderId){
         String message = receivedMessage.toLowerCase(Locale.ROOT);
-        BuilderMessage builderMessage = new BuilderMessage(message);
+        BuilderMessage builderMessage = new BuilderMessage(message, senderId);
 
         return builderMessage.buildMessage();
     }
