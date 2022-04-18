@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.controller;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.TokenService;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,7 +61,7 @@ public class MessageControllerTest {
                 .andReturn();
         String challengeResponse = result.getResponse().getContentAsString();
 
-        Assertions.assertEquals(challenge, challengeResponse);
+        assertEquals(challenge, challengeResponse);
     }
 
     @Test
@@ -89,7 +92,6 @@ public class MessageControllerTest {
                 .andReturn();
     }
 
-
     private EventRequest createEventRequest(){
         EventMessage eventMessage = EventMessage.builder()
                 .message(new Message("123", "Mensagem de teste"))
@@ -119,4 +121,21 @@ public class MessageControllerTest {
         return eventRequest;
     }
 
+    @Test
+    public void testReceiveTheMessageButCannotSendTheReply() throws Exception {
+        EventRequest eventRequest = this.createEventRequest();
+        String errorMessage = "Não foi possível enviar uma resposta para o messenger!";
+        when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage()))
+                .thenThrow(new ResponseMessageException("Não foi possível enviar uma resposta para o messenger!"));
+
+        mvc.perform(post("/webhook")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventRequest))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseMessageException))
+                .andExpect(result -> assertEquals(errorMessage, result.getResolvedException().getMessage()))
+                .andExpect(result -> System.out.println(result.getResponse().getContentAsString()));
+
+    }
 }
