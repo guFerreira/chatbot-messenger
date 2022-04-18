@@ -13,14 +13,17 @@ public class BuilderMessage {
 
     private final AgentService agentService;
 
-    public BuilderMessage(AgentService agentService) {
+    private final WeatherStrategy weatherStrategy;
+
+    public BuilderMessage(AgentService agentService, WeatherStrategy weatherStrategy) {
         this.agentService = agentService;
+        this.weatherStrategy = weatherStrategy;
         this.strategies = new ArrayList<MessageCreationStrategy>();
         this.addMessageCreationStrategiesToTheContext();
     }
 
     private void addMessageCreationStrategiesToTheContext(){
-        this.strategies.add(new WeatherStrategy());
+        this.strategies.add(this.weatherStrategy);
     }
 
     public String build( String senderId, String receivedMessage){
