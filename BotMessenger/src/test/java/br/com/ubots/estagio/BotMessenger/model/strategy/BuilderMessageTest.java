@@ -4,12 +4,9 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 import br.com.ubots.estagio.BotMessenger.service.AgentService;
 import com.google.cloud.dialogflow.v2.Intent;
 import com.google.cloud.dialogflow.v2.QueryResult;
-import com.google.cloud.dialogflow.v2.QueryResultOrBuilder;
 import com.google.protobuf.Struct;
-import com.google.protobuf.StructOrBuilder;
 import com.google.protobuf.Value;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,7 +49,6 @@ public class BuilderMessageTest {
     @Test
     public void testBuildMessageByResponseFromDialogflowWithParameters(){
         QueryResult queryResult = this.createQueryResultWithParameters();
-
         Mockito.when(agentService.detectIntentTexts("text","sessionId"))
                 .thenReturn(queryResult);
         Mockito.when(weatherStrategy.verifyIntents("clima")).thenReturn(true);
@@ -73,7 +69,6 @@ public class BuilderMessageTest {
                         build())
                 .build();
 
-
         Struct struct = Struct
                 .newBuilder()
                 .putFields("location", Value
@@ -88,6 +83,25 @@ public class BuilderMessageTest {
                 .setFulfillmentText("intencao sobre clima")
                 .setAllRequiredParamsPresent(true)
                 .setParameters(struct)
+                .build();
+    }
+    
+    @Test
+    public void testBuildMessageByResponseFromDialogflowMissingMandatoryParameters(){
+        QueryResult queryResult = this.createQueryResultWithMissingParameters();
+        Mockito.when(agentService.detectIntentTexts("text","sessionId"))
+                .thenReturn(queryResult);
+
+        String result = builderMessage.build("sessionId","text");
+
+        Assertions.assertEquals("falta parametros", result);
+    }
+    private QueryResult createQueryResultWithMissingParameters(){
+        return QueryResult
+                .newBuilder()
+                .setIntent(Intent.newBuilder().setDisplayName("clima").build())
+                .setFulfillmentText("falta parametros")
+                .setAllRequiredParamsPresent(false)
                 .build();
     }
 }
