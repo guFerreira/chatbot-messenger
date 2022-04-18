@@ -6,7 +6,10 @@ import com.google.cloud.dialogflow.v2.Intent;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.cloud.dialogflow.v2.QueryResultOrBuilder;
 import com.google.protobuf.Struct;
+import com.google.protobuf.StructOrBuilder;
+import com.google.protobuf.Value;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,22 +22,72 @@ public class BuilderMessageTest {
     @Mock
     private AgentService agentService;
 
+    @Mock
+    private  WeatherStrategy weatherStrategy;
+
     @InjectMocks
     private BuilderMessage builderMessage;
 
+
     @Test
     public void testBuildMessageByResponseFromDialogflow(){
-        QueryResult queryResult = QueryResult
-                .newBuilder()
-                .setIntent(Intent.newBuilder().setDisplayName("nome").build())
-                .setFulfillmentText("intencao que fala sobre o nome")
-                .setAllRequiredParamsPresent(true)
-                .build();
+        QueryResult queryResult = this.createQueryResultWithoutParameters();
         Mockito.when(agentService.detectIntentTexts("text","sessionId"))
                 .thenReturn(queryResult);
 
         String result = builderMessage.build("sessionId","text");
 
         Assertions.assertEquals(result, "intencao que fala sobre o nome");
+    }
+
+    private QueryResult createQueryResultWithoutParameters(){
+        return QueryResult
+                .newBuilder()
+                .setIntent(Intent.newBuilder().setDisplayName("nome").build())
+                .setFulfillmentText("intencao que fala sobre o nome")
+                .setAllRequiredParamsPresent(true)
+                .build();
+    }
+
+    @Test
+    public void testBuildMessageByResponseFromDialogflowWithParameters(){
+        QueryResult queryResult = this.createQueryResultWithParameters();
+
+        Mockito.when(agentService.detectIntentTexts("text","sessionId"))
+                .thenReturn(queryResult);
+        Mockito.when(weatherStrategy.verifyIntents("clima")).thenReturn(true);
+        Mockito.when(weatherStrategy.buildMessage(queryResult))
+                .thenReturn("mensagem personalizada sobre o clima");
+
+
+        String result = builderMessage.build("sessionId","text");
+
+        Assertions.assertEquals("mensagem personalizada sobre o clima", result);
+    }
+    private QueryResult createQueryResultWithParameters(){
+        Struct structCity = Struct
+                .newBuilder()
+                .putFields("city", Value
+                        .newBuilder()
+                        .setStringValue("Alegrete").
+                        build())
+                .build();
+
+
+        Struct struct = Struct
+                .newBuilder()
+                .putFields("location", Value
+                        .newBuilder()
+                        .setStructValue(structCity)
+                        .build())
+                .build();
+
+        return QueryResult
+                .newBuilder()
+                .setIntent(Intent.newBuilder().setDisplayName("clima").build())
+                .setFulfillmentText("intencao sobre clima")
+                .setAllRequiredParamsPresent(true)
+                .setParameters(struct)
+                .build();
     }
 }
