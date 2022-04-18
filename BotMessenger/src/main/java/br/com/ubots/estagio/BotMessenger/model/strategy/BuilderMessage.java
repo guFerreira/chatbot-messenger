@@ -5,7 +5,6 @@ import com.google.cloud.dialogflow.v2.QueryResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class BuilderMessage {
     private String receivedMessage;
@@ -21,7 +20,7 @@ public class BuilderMessage {
     }
 
     private void addMessageCreationStrategiesToTheContext(){
-        this.strategies.add(new WeatherStrategy(this.receivedMessage));
+        this.strategies.add(new WeatherStrategy());
     }
 
     public String buildMessage(){

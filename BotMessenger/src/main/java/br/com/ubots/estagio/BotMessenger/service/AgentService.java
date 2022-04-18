@@ -1,10 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.api.gax.rpc.ApiException;
 
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
 import com.google.cloud.dialogflow.v2.QueryInput;

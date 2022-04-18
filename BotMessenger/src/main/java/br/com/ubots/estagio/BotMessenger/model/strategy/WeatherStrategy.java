@@ -12,12 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WeatherStrategy implements MessageCreationStrategy {
-    private String receivedMessage;
     private WeatherService weatherService = new WeatherServiceImpl();
-
-    public WeatherStrategy(String receivedMessage) {
-        this.receivedMessage = receivedMessage;
-    }
 
     @Override
     public String buildMessage(QueryResult queryResult) {
@@ -27,6 +22,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
         }catch (Exception e){
             return this.buildFallBackMessageWhenCityNotFound(cityName);
         }
+
     }
 
     private String extractCityNameByReceivedMessage(QueryResult queryResult){
@@ -44,6 +40,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
         String cityName = weatherForecastDTO.getCityName();
         String weatherDescription = weatherForecastDTO.getWeatherDescription();
         float temperatureInCelsius = this.transformKelvinToCelsius(weatherForecastDTO.getTemperatureInKelvin());
+
         return "Na cidade "+ cityName +", o clima atual é: " +
                 weatherDescription + ".\nA temperatura atual está em " +
                 this.formatTemperature(temperatureInCelsius) + "°C. "+ this.getEmojiThermometer();

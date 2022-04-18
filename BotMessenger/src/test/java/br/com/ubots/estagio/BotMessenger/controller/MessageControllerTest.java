@@ -72,4 +72,51 @@ public class MessageControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @Test
+    public void testReceiveMessageFromUserAnd() throws Exception {
+        EventRequest eventRequest = this.createEventRequest();
+        when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage())).thenReturn(200);
+
+        mvc.perform(post("/webhook")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventRequest))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    result.getResponse().getContentAsString()
+                            .contains(WebhookEventStatus.EVENT_RECEIVED.toString());
+                })
+                .andReturn();
+    }
+
+
+    private EventRequest createEventRequest(){
+        EventMessage eventMessage = EventMessage.builder()
+                .message(new Message("123", "Mensagem de teste"))
+                .field("teste")
+                .recipient(new Recipient("123"))
+                .timestamp("timestamp")
+                .value(new Value(new Sender("123")))
+                .build();
+
+        List<EventMessage> eventMessages = new ArrayList<>();
+        eventMessages.add(eventMessage);
+
+        Entry entry = Entry
+                .builder()
+                .id("1")
+                .time("time")
+                .messaging(eventMessages)
+                .build();
+
+        List<Entry> entries = new ArrayList<>();
+
+        EventRequest eventRequest = EventRequest
+                .builder()
+                .entry(entries)
+                .build();
+
+        return eventRequest;
+    }
+
 }

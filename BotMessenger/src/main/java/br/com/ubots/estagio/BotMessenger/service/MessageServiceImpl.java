@@ -5,7 +5,9 @@ import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.model.strategy.*;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,9 +22,10 @@ public class MessageServiceImpl implements MessageService {
     @Value("${FB_MSG_URL}")
     private String facebookUrlApi;
 
+    @Autowired
+    private RestTemplate restTemplate;
     @Override
-    public void sendMessage(String senderId, String receivedMessage) {
-        RestTemplate restTemplate = new RestTemplate();
+    public int sendMessage(String senderId, String receivedMessage) {
         PostMessageResponseDTO messageResponse = PostMessageResponseDTO
                 .builder()
                 .messageType("message")
@@ -30,7 +33,12 @@ public class MessageServiceImpl implements MessageService {
                 .message(new PostMessageDTO(this.buildResponse(receivedMessage, senderId)))
                 .build();
 
-        restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
+        ResponseEntity responseEntity = restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
+
+//        if (responseEntity.getStatusCodeValue() != 200){
+//
+//        }
+        return responseEntity.getStatusCodeValue();
     }
 
     private String buildResponse(String receivedMessage, String senderId){
