@@ -2,6 +2,7 @@ package br.com.ubots.estagio.BotMessenger.service;
 
 import br.com.ubots.estagio.BotMessenger.dto.PostMessageDTO;
 import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.model.strategy.*;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
@@ -39,6 +40,9 @@ public class MessageServiceImpl implements MessageService {
 
         ResponseEntity responseEntity = restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
 
+        if (responseEntity.getStatusCodeValue() != 200){
+            throw new ResponseMessageException("A resposta enviada ao messenger não foi aceita com sucesso");
+        }
         return responseEntity.getStatusCodeValue();
     }
 
