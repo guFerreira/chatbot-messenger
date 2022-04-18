@@ -2,19 +2,19 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 
 import br.com.ubots.estagio.BotMessenger.service.AgentService;
 import com.google.cloud.dialogflow.v2.QueryResult;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class BuilderMessage {
-    private String receivedMessage;
-    private String senderId;
     private List<MessageCreationStrategy> strategies;
 
-    private AgentService agentService = new AgentService();
-    public BuilderMessage(String receivedMessage, String senderId) {
-        this.receivedMessage = receivedMessage;
-        this.senderId = senderId;
+    private final AgentService agentService;
+
+    public BuilderMessage(AgentService agentService) {
+        this.agentService = agentService;
         this.strategies = new ArrayList<MessageCreationStrategy>();
         this.addMessageCreationStrategiesToTheContext();
     }
@@ -23,8 +23,8 @@ public class BuilderMessage {
         this.strategies.add(new WeatherStrategy());
     }
 
-    public String buildMessage(){
-        QueryResult queryResult = agentService.detectIntentTexts(this.receivedMessage,this.senderId);
+    public String build(String receivedMessage, String senderId){
+        QueryResult queryResult = agentService.detectIntentTexts(receivedMessage, senderId);
 
         if (!queryResult.getAllRequiredParamsPresent()){
             return queryResult.getFulfillmentText();

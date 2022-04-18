@@ -5,7 +5,7 @@ import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.model.strategy.*;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Locale;
 
 @Service
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
     @Value("${VERIFY_TOKEN}")
@@ -22,8 +23,11 @@ public class MessageServiceImpl implements MessageService {
     @Value("${FB_MSG_URL}")
     private String facebookUrlApi;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+
+    private final BuilderMessage builderMessage;
+
+
     @Override
     public int sendMessage(String senderId, String receivedMessage) {
         PostMessageResponseDTO messageResponse = PostMessageResponseDTO
@@ -35,17 +39,13 @@ public class MessageServiceImpl implements MessageService {
 
         ResponseEntity responseEntity = restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
 
-//        if (responseEntity.getStatusCodeValue() != 200){
-//
-//        }
         return responseEntity.getStatusCodeValue();
     }
 
     private String buildResponse(String receivedMessage, String senderId){
         String message = receivedMessage.toLowerCase(Locale.ROOT);
-        BuilderMessage builderMessage = new BuilderMessage(message, senderId);
 
-        return builderMessage.buildMessage();
+        return this.builderMessage.build(message, senderId);
     }
 
 }
