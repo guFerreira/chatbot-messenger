@@ -124,9 +124,9 @@ public class MessageControllerTest {
     @Test
     public void testReceiveTheMessageButCannotSendTheReply() throws Exception {
         EventRequest eventRequest = this.createEventRequest();
-        String errorMessage = "Não foi possível enviar uma resposta para o messenger!";
+        String errorMessage = "A resposta enviada ao messenger não foi aceita com sucesso";
         when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage()))
-                .thenThrow(new ResponseMessageException("Não foi possível enviar uma resposta para o messenger!"));
+                .thenThrow(new ResponseMessageException("A resposta enviada ao messenger não foi aceita com sucesso"));
 
         mvc.perform(post("/webhook")
                         .contentType(MediaType.APPLICATION_JSON)
