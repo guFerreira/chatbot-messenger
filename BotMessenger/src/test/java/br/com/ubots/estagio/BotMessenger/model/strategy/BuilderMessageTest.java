@@ -85,7 +85,7 @@ public class BuilderMessageTest {
                 .setParameters(struct)
                 .build();
     }
-    
+
     @Test
     public void testBuildMessageByResponseFromDialogflowMissingMandatoryParameters(){
         QueryResult queryResult = this.createQueryResultWithMissingParameters();

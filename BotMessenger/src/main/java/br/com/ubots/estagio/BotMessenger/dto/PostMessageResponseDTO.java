@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Builder
 public class PostMessageResponseDTO {
     @JsonProperty("message_type")

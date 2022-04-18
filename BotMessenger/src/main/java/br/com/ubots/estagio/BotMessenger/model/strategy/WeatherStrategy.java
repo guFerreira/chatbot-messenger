@@ -4,14 +4,10 @@ import br.com.ubots.estagio.BotMessenger.model.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import br.com.ubots.estagio.BotMessenger.service.WeatherServiceImpl;
 import com.google.cloud.dialogflow.v2.QueryResult;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Component
 public class WeatherStrategy implements MessageCreationStrategy {
     private WeatherService weatherService = new WeatherServiceImpl();
