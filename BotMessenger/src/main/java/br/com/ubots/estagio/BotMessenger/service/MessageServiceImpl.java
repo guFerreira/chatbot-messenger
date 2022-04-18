@@ -28,15 +28,9 @@ public class MessageServiceImpl implements MessageService {
 
     private final BuilderMessage builderMessage;
 
-
     @Override
     public int sendMessage(String senderId, String receivedMessage) {
-        PostMessageResponseDTO messageResponse = PostMessageResponseDTO
-                .builder()
-                .messageType("message")
-                .recipient(new Recipient(senderId))
-                .message(new PostMessageDTO(this.buildResponse(receivedMessage, senderId)))
-                .build();
+        PostMessageResponseDTO messageResponse = this.createMessageResponse(senderId, receivedMessage);
 
         ResponseEntity responseEntity = restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
 
@@ -46,10 +40,18 @@ public class MessageServiceImpl implements MessageService {
         return responseEntity.getStatusCodeValue();
     }
 
-    private String buildResponse(String receivedMessage, String senderId){
-        String message = receivedMessage.toLowerCase(Locale.ROOT);
+    private PostMessageResponseDTO createMessageResponse(String senderId, String receivedMessage){
+        return PostMessageResponseDTO
+                .builder()
+                .messageType("message")
+                .recipient(new Recipient(senderId))
+                .message(new PostMessageDTO(this.buildResponse(senderId, receivedMessage)))
+                .build();
+    }
 
-        return this.builderMessage.build(message, senderId);
+    private String buildResponse(String senderId, String receivedMessage){
+        String message = receivedMessage.toLowerCase(Locale.ROOT);
+        return this.builderMessage.build(senderId, message);
     }
 
 }

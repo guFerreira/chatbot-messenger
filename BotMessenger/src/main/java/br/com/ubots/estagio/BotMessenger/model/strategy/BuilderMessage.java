@@ -23,7 +23,7 @@ public class BuilderMessage {
         this.strategies.add(new WeatherStrategy());
     }
 
-    public String build(String receivedMessage, String senderId){
+    public String build( String senderId, String receivedMessage){
         QueryResult queryResult = agentService.detectIntentTexts(receivedMessage, senderId);
 
         if (!queryResult.getAllRequiredParamsPresent()){

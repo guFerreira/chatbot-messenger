@@ -53,7 +53,7 @@ public class MessageServiceTest {
                 .build();
 
         Mockito.when(builderMessage
-                        .build("mensagem de teste", "12345"))
+                        .build("12345", "mensagem de teste"))
                 .thenReturn("teste");
     }
 
