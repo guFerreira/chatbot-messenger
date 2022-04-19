@@ -3,30 +3,40 @@ package br.com.ubots.estagio.BotMessenger.service;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
-import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.Normalizer;
 
-@Component
-public class WeatherServiceWeatherbit{
-    private static final String KEY_WEATHERBIT_API = "ee5c6ca8e6a640be82f757e159a1ee3b";
-    private static final String URL_WEATHERBIT_DAILY_API = "https://api.weatherbit.io/v2.0/forecast/daily?";
-    private static final String URL_WEATHERBIT_CURRENT_API = "https://api.weatherbit.io/v2.0/current?";
-    private static final String LANG = "pt";
-    RestTemplate restTemplate = new RestTemplate();
+@Service
+@RequiredArgsConstructor
+public class WeatherServiceWeatherbit implements WeatherService{
+    @Value("${KEY_WEATHERBIT_API}")
+    private String keyWeatherbitApi;
+    @Value("${URL_WEATHERBIT_DAILY_API}")
+    private String urlWeatherbitDailyApi;
+    @Value("${URL_WEATHERBIT_CURRENT_API}")
+    private String urlWeatherbitCurrentApi;
+    @Value("${LANG_WEATHERBIT}")
+    private String lang;
+
+    private final RestTemplate restTemplate;
 
 
-    public WeatherForecastDto getWeatherForecastByCityNameForSixteenDays(String cityName) {
-        String urlWithParameters = URL_WEATHERBIT_DAILY_API+"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+LANG+"&key="+KEY_WEATHERBIT_API;
-
+    @Override
+    public WeatherForecastDto getWeatherForecastByCityNameForDays(String cityName) {
+        String urlWithParameters = urlWeatherbitDailyApi +"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+ lang +"&key="+ keyWeatherbitApi;
+        System.out.println(lang);
         WeatherForecastDto weatherForecastDto = restTemplate.getForObject(urlWithParameters, WeatherForecastDto.class);
 
         return weatherForecastDto;
     }
 
+    @Override
     public WeatherForecast getCurrentWeatherForecastByCityName(String cityName) {
-        String urlWithParameters = URL_WEATHERBIT_CURRENT_API+"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+LANG+"&key="+KEY_WEATHERBIT_API;
+        String urlWithParameters = urlWeatherbitCurrentApi +"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+ lang +"&key="+ keyWeatherbitApi;
 
         WeatherForecastDto weatherForecastDto = restTemplate.getForObject(urlWithParameters, WeatherForecastDto.class);
 

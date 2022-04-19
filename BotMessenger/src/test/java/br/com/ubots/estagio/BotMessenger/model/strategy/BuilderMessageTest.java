@@ -1,7 +1,7 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
 
-import br.com.ubots.estagio.BotMessenger.service.AgentService;
+import br.com.ubots.estagio.BotMessenger.service.AgentServiceImpl;
 import com.google.cloud.dialogflow.v2.Intent;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.protobuf.Struct;
@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class BuilderMessageTest {
     @Mock
-    private AgentService agentService;
+    private AgentServiceImpl agentService;
 
     @Mock
     private  WeatherStrategy weatherStrategy;

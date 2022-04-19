@@ -2,21 +2,23 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
-import br.com.ubots.estagio.BotMessenger.service.WeatherServiceWeatherbit;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.protobuf.ListValue;
 import com.google.protobuf.Struct;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-@NoArgsConstructor
 @Component
 public class WeatherStrategy implements MessageCreationStrategy {
-    private WeatherServiceWeatherbit weatherService = new WeatherServiceWeatherbit();
+    private WeatherService weatherService;
+
+    public WeatherStrategy(WeatherService weatherService) {
+        this.weatherService = weatherService;
+    }
 
     @Override
     public boolean verifyIntents(String message) {
@@ -71,7 +73,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
     }
 
     private String buildWeatherForecastMessageBySpecificDate(String cityName, String date) {
-        WeatherForecastDto weatherForecastDto = this.weatherService.getWeatherForecastByCityNameForSixteenDays(cityName);
+        WeatherForecastDto weatherForecastDto = this.weatherService.getWeatherForecastByCityNameForDays(cityName);
         Optional<WeatherForecast> weatherForecast = this.getWeatherForecastByDate(weatherForecastDto, date);
 
         if (weatherForecast.isPresent())
@@ -88,10 +90,15 @@ public class WeatherStrategy implements MessageCreationStrategy {
     }
 
     private String buildWeatherForecastMessageByDate(br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast weatherForecast, String city) {
-        String response = "Na cidade " + city + " " + this.getEmojiCity() +", o clima no dia " + weatherForecast.getDate()+ " é: " +
+        String response = "Na cidade " + city + " " + this.getEmojiCity() +", o clima no dia " + this.formatDate(weatherForecast.getDate())+ " é: " +
                 weatherForecast.getWeather().getDescription() + ".\n A temperatura minima é de " +
                 weatherForecast.getTemperatureMin() + "°C, e a máxima esperada é de " + weatherForecast.getTemperatureMax() + "°C. " + this.getEmojiThermometer();
         return response;
+    }
+
+    private String formatDate(String date){
+        String[] parts = date.split("-");
+        return parts[2]+ "/" + parts[1] + "/" + parts[0];
     }
 
     private String fallbackNotFoundWeatherForecastByDate(){
