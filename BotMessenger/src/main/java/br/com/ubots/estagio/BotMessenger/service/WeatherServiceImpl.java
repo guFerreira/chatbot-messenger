@@ -34,10 +34,7 @@ public class WeatherServiceImpl implements WeatherService {
         ResponseEntity<WeatherForecastDto> weatherForecastEntity = restTemplate
                 .getForEntity(urlWithParameters, WeatherForecastDto.class);
 
-        if (weatherForecastEntity.getStatusCodeValue() != 200){
-            throw new ConsumeApiException("Ocorreu algum erro ao buscar os dados de previsão do tempo na API");
-        }
-
+        this.checkErrorGetDataFromApi(weatherForecastEntity.getStatusCodeValue());
         return weatherForecastEntity.getBody();
     }
 
@@ -45,15 +42,21 @@ public class WeatherServiceImpl implements WeatherService {
     public WeatherForecast getCurrentWeatherForecastByCityName(String cityName) {
         String urlWithParameters = urlWeatherbitCurrentApi + this.createParametersForUrl(cityName);
 
-        WeatherForecastDto weatherForecastDto = restTemplate.getForObject(urlWithParameters, WeatherForecastDto.class);
+        ResponseEntity<WeatherForecastDto> weatherForecastEntity = restTemplate.getForEntity(urlWithParameters, WeatherForecastDto.class);
 
-        return weatherForecastDto.getWeatherForecast().get(0);
+        this.checkErrorGetDataFromApi(weatherForecastEntity.getStatusCodeValue());
+        return weatherForecastEntity.getBody().getWeatherForecast().get(0);
     }
 
     private String createParametersForUrl(String cityName) {
         return "city=" + this.formatCityNameToAddAsParameter(cityName) + ",BR&lang=" + lang + "&key=" + keyWeatherbitApi;
     }
 
+    private void checkErrorGetDataFromApi(int httpStatus){
+        if (httpStatus != 200){
+            throw new ConsumeApiException("Ocorreu algum erro ao buscar os dados de previsão do tempo na API");
+        }
+    }
     private String formatCityNameToAddAsParameter(String cityName) {
         cityName = this.removeAccents(cityName);
         return this.replaceSpacesToPlusCharacter(cityName);
