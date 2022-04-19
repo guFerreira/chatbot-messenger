@@ -1,6 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
-import br.com.ubots.estagio.BotMessenger.model.WeatherForecast;
+import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import org.springframework.stereotype.Component;
@@ -25,12 +25,12 @@ public class WeatherServiceWeatherbit{
         return weatherForecastDto;
     }
 
-    public WeatherForecastDto getCurrentWeatherForecastByCityName(String cityName) {
+    public WeatherForecast getCurrentWeatherForecastByCityName(String cityName) {
         String urlWithParameters = URL_WEATHERBIT_CURRENT_API+"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+LANG+"&key="+KEY_WEATHERBIT_API;
 
         WeatherForecastDto weatherForecastDto = restTemplate.getForObject(urlWithParameters, WeatherForecastDto.class);
 
-        return weatherForecastDto;
+        return weatherForecastDto.getWeatherForecast().get(0);
     }
 
     private String formatCityNameToAddAsParameter(String cityName){
