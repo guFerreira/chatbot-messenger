@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
@@ -21,16 +22,21 @@ public class WeatherStrategy implements MessageCreationStrategy {
     }
 
     @Override
-    public boolean verifyIntents(String message) {
-        return message.equals("#Clima");
+    public boolean verifyIntents(String intent) {
+        return intent.equals("#Clima");
     }
 
     @Override
     public String buildMessage(QueryResult queryResult) {
         String cityName = this.extractCityNameByParameters(queryResult);
         String date = this.extractDateByParameters(queryResult);
+        try{
+            return this.createWeatherForecastMessage(cityName, date);
+        }catch (ConsumeApiException consumeApiException){
+            return "Ops! Aconteceu algum erro ao buscar os dados de previsão do tempo. \n" +
+                    "Peço desculpas, tente novamente mais tarde!";
+        }
 
-        return this.createWeatherForecastMessage(cityName, date);
     }
 
     private String extractCityNameByParameters(QueryResult queryResult) {

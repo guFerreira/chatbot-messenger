@@ -1,6 +1,5 @@
 package br.com.ubots.estagio.BotMessenger.model.weatherbit;
 
-import br.com.ubots.estagio.BotMessenger.model.Weather;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
