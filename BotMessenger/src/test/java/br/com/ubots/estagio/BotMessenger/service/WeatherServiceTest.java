@@ -77,9 +77,24 @@ public class WeatherServiceTest {
         Mockito.when(restTemplate.getForEntity(urlCurrent, WeatherForecastDto.class))
                 .thenReturn(ResponseEntity.ok(this.createWeatherForecastDto()));
 
-        WeatherForecast weatherForecast = weatherService.getCurrentWeatherForecastByCityName("São Paulo");
+        WeatherForecast weatherForecast = weatherService.getCurrentWeatherForecastByCityName("Campinas");
 
         assertEquals(10.2f, weatherForecast.getTemp());
+    }
+
+    @Test
+    public void testErrorGetDataFromApiByCurrentWeatherForecast() {
+        Mockito.when(restTemplate.getForEntity(urlCurrent, WeatherForecastDto.class))
+                .thenReturn(ResponseEntity.badRequest().build());
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            weatherService.getCurrentWeatherForecastByCityName("Campinas");
+        });
+
+        String expectedMessage = "Ocorreu algum erro ao buscar os dados de previsão do tempo na API";
+        String actualMessage = exception.getMessage();
+        assertEquals(expectedMessage, actualMessage);
+
     }
 
     private WeatherForecastDto createWeatherForecastDto(){
@@ -88,7 +103,6 @@ public class WeatherServiceTest {
 
         WeatherForecastDto weatherForecastDto = WeatherForecastDto.builder().weatherForecast(weatherForecasts).build();
         return weatherForecastDto;
-
     }
 
 }
