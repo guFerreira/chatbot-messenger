@@ -2,19 +2,26 @@ package br.com.ubots.estagio.BotMessenger.service;
 
 import java.io.IOException;
 
+import br.com.ubots.estagio.BotMessenger.service.interfaces.AgentService;
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
 import com.google.cloud.dialogflow.v2.QueryInput;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.cloud.dialogflow.v2.SessionName;
 import com.google.cloud.dialogflow.v2.SessionsClient;
 import com.google.cloud.dialogflow.v2.TextInput;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-@Component
-public class AgentService {
-    private String languageCode = "pt-BR";
+@Service
+public class AgentServiceImpl implements AgentService {
 
-    private String projectId = "chatbottest-ewkm";
+    private final String languageCode;
+    private final String projectId;
+
+    public AgentServiceImpl(@Value("${LANGUAGE_CODE}")String languageCode, @Value("${DIALOGFLOW_PROJECT_ID}")String projectId) {
+        this.languageCode = languageCode;
+        this.projectId = projectId;
+    }
 
     public QueryResult detectIntentTexts(String text, String sessionId) {
         try (SessionsClient sessionsClient = SessionsClient.create()) {

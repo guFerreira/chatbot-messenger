@@ -1,6 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
-import br.com.ubots.estagio.BotMessenger.service.AgentService;
+import br.com.ubots.estagio.BotMessenger.service.interfaces.AgentService;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import org.springframework.stereotype.Component;
 
