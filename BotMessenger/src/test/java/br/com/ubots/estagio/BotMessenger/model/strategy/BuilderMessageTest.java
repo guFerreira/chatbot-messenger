@@ -50,6 +50,18 @@ public class BuilderMessageTest {
 
         Assertions.assertEquals("mensagem personalizada sobre o clima", result);
     }
+
+    @Test
+    public void testBuildMessageByResponseFromDialogflowMissingMandatoryParameters(){
+        QueryResult queryResult = this.createQueryResultWithMissingParameters();
+        Mockito.when(agentService.detectIntentTexts("text","sessionId"))
+                .thenReturn(queryResult);
+
+        String result = builderMessage.build("sessionId","text");
+
+        Assertions.assertEquals("falta parametros", result);
+    }
+
     private QueryResult createQueryResultWithParameters(){
         Struct structCity = Struct
                 .newBuilder()
@@ -74,17 +86,6 @@ public class BuilderMessageTest {
                 .setAllRequiredParamsPresent(true)
                 .setParameters(struct)
                 .build();
-    }
-
-    @Test
-    public void testBuildMessageByResponseFromDialogflowMissingMandatoryParameters(){
-        QueryResult queryResult = this.createQueryResultWithMissingParameters();
-        Mockito.when(agentService.detectIntentTexts("text","sessionId"))
-                .thenReturn(queryResult);
-
-        String result = builderMessage.build("sessionId","text");
-
-        Assertions.assertEquals("falta parametros", result);
     }
 
     private QueryResult createQueryResultWithoutParameters(){

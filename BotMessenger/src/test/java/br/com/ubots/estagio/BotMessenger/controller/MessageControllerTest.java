@@ -92,6 +92,24 @@ public class MessageControllerTest {
                 .andReturn();
     }
 
+    @Test
+    public void testReceiveTheMessageButCannotSendTheReply() throws Exception {
+        EventRequest eventRequest = this.createEventRequest();
+        String errorMessage = "A resposta enviada ao messenger não foi aceita com sucesso";
+        when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage()))
+                .thenThrow(new ResponseMessageException("A resposta enviada ao messenger não foi aceita com sucesso"));
+
+        mvc.perform(post("/webhook")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventRequest))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseMessageException))
+                .andExpect(result -> assertEquals(errorMessage, result.getResolvedException().getMessage()))
+                .andExpect(result -> System.out.println(result.getResponse().getContentAsString()));
+
+    }
+
     private EventRequest createEventRequest(){
         EventMessage eventMessage = EventMessage.builder()
                 .message(new Message("123", "Mensagem de teste"))
@@ -119,23 +137,5 @@ public class MessageControllerTest {
                 .build();
 
         return eventRequest;
-    }
-
-    @Test
-    public void testReceiveTheMessageButCannotSendTheReply() throws Exception {
-        EventRequest eventRequest = this.createEventRequest();
-        String errorMessage = "A resposta enviada ao messenger não foi aceita com sucesso";
-        when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage()))
-                .thenThrow(new ResponseMessageException("A resposta enviada ao messenger não foi aceita com sucesso"));
-
-        mvc.perform(post("/webhook")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(eventRequest))
-                        .characterEncoding("utf-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseMessageException))
-                .andExpect(result -> assertEquals(errorMessage, result.getResolvedException().getMessage()))
-                .andExpect(result -> System.out.println(result.getResponse().getContentAsString()));
-
     }
 }
