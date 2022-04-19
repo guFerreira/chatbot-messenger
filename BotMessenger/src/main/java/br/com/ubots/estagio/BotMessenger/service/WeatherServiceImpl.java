@@ -5,14 +5,16 @@ import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.Normalizer;
 
 @Service
 @RequiredArgsConstructor
-public class WeatherServiceWeatherbit implements WeatherService{
+public class WeatherServiceImpl implements WeatherService {
     @Value("${KEY_WEATHERBIT_API}")
     private String keyWeatherbitApi;
     @Value("${URL_WEATHERBIT_DAILY_API}")
@@ -24,36 +26,44 @@ public class WeatherServiceWeatherbit implements WeatherService{
 
     private final RestTemplate restTemplate;
 
-
     @Override
     public WeatherForecastDto getWeatherForecastByCityNameForDays(String cityName) {
-        String urlWithParameters = urlWeatherbitDailyApi +"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+ lang +"&key="+ keyWeatherbitApi;
-        System.out.println(lang);
-        WeatherForecastDto weatherForecastDto = restTemplate.getForObject(urlWithParameters, WeatherForecastDto.class);
+        String urlWithParameters = urlWeatherbitDailyApi + this.createParametersForUrl(cityName);
 
-        return weatherForecastDto;
+        ResponseEntity<WeatherForecastDto> weatherForecastEntity = restTemplate
+                .getForEntity(urlWithParameters, WeatherForecastDto.class);
+
+        if (weatherForecastEntity.getStatusCodeValue() != 200){
+            //todo lançar exceção avisando que não foi possível buscar os dados de cidade da api
+        }
+
+        return weatherForecastEntity.getBody();
     }
 
     @Override
     public WeatherForecast getCurrentWeatherForecastByCityName(String cityName) {
-        String urlWithParameters = urlWeatherbitCurrentApi +"city="+this.formatCityNameToAddAsParameter(cityName)+",BR&lang="+ lang +"&key="+ keyWeatherbitApi;
+        String urlWithParameters = urlWeatherbitCurrentApi + this.createParametersForUrl(cityName);
 
         WeatherForecastDto weatherForecastDto = restTemplate.getForObject(urlWithParameters, WeatherForecastDto.class);
 
         return weatherForecastDto.getWeatherForecast().get(0);
     }
 
-    private String formatCityNameToAddAsParameter(String cityName){
+    private String createParametersForUrl(String cityName) {
+        return "city=" + this.formatCityNameToAddAsParameter(cityName) + ",BR&lang=" + lang + "&key=" + keyWeatherbitApi;
+    }
+
+    private String formatCityNameToAddAsParameter(String cityName) {
         cityName = this.removeAccents(cityName);
         return this.replaceSpacesToPlusCharacter(cityName);
     }
 
-    private String removeAccents(String cityName){
+    private String removeAccents(String cityName) {
         String cityNameNormalized = Normalizer.normalize(cityName, Normalizer.Form.NFD);
         return cityNameNormalized.replaceAll("\\p{M}", "");
     }
 
-    private String replaceSpacesToPlusCharacter(String cityName){
+    private String replaceSpacesToPlusCharacter(String cityName) {
         return cityName.replace(" ", "+");
     }
 
