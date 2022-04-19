@@ -65,4 +65,5 @@ public class WeatherServiceTest {
         assertEquals(expectedMessage, actualMessage);
 
     }
+
 }

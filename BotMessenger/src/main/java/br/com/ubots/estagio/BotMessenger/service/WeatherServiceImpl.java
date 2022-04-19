@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
@@ -34,7 +35,7 @@ public class WeatherServiceImpl implements WeatherService {
                 .getForEntity(urlWithParameters, WeatherForecastDto.class);
 
         if (weatherForecastEntity.getStatusCodeValue() != 200){
-            //todo lançar exceção avisando que não foi possível buscar os dados de cidade da api
+            throw new ConsumeApiException("Ocorreu algum erro ao buscar os dados de previsão do tempo na API");
         }
 
         return weatherForecastEntity.getBody();
