@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
+import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,6 +32,7 @@ public class WeatherServiceTest {
 
     private String urlDaily;
     private String city;
+    private String urlCurrent;
 
     @BeforeEach
     public void setUp() {
@@ -38,6 +43,7 @@ public class WeatherServiceTest {
 
         this.city = "Campinas";
         this.urlDaily = "urlDailyTest/city=" + city + ",BR&lang=pt&key=keyWeatherbit";
+        this.urlCurrent = "urlCurrentTest/city=" + city + ",BR&lang=pt&key=keyWeatherbit";
     }
 
     @Test
@@ -63,6 +69,25 @@ public class WeatherServiceTest {
         String expectedMessage = "Ocorreu algum erro ao buscar os dados de previsão do tempo na API";
         String actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
+
+    }
+
+    @Test
+    public void testGetCurrentWeatherForecastByCityNameReturnsObjectByApi() {
+        Mockito.when(restTemplate.getForEntity(urlCurrent, WeatherForecastDto.class))
+                .thenReturn(ResponseEntity.ok(this.createWeatherForecastDto()));
+
+        WeatherForecast weatherForecast = weatherService.getCurrentWeatherForecastByCityName("São Paulo");
+
+        assertEquals(10.2f, weatherForecast.getTemp());
+    }
+
+    private WeatherForecastDto createWeatherForecastDto(){
+        List<WeatherForecast> weatherForecasts = new ArrayList<>();
+        weatherForecasts.add(WeatherForecast.builder().temp(10.2f).build());
+
+        WeatherForecastDto weatherForecastDto = WeatherForecastDto.builder().weatherForecast(weatherForecasts).build();
+        return weatherForecastDto;
 
     }
 
