@@ -7,6 +7,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class PostMessageResponseDTO {
     @JsonProperty("message_type")
     private String messageType;

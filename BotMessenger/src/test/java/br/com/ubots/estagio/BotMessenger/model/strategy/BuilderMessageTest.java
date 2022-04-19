@@ -25,7 +25,6 @@ public class BuilderMessageTest {
     @InjectMocks
     private BuilderMessage builderMessage;
 
-
     @Test
     public void testBuildMessageByResponseFromDialogflow(){
         QueryResult queryResult = this.createQueryResultWithoutParameters();
@@ -35,15 +34,6 @@ public class BuilderMessageTest {
         String result = builderMessage.build("sessionId","text");
 
         Assertions.assertEquals(result, "intencao que fala sobre o nome");
-    }
-
-    private QueryResult createQueryResultWithoutParameters(){
-        return QueryResult
-                .newBuilder()
-                .setIntent(Intent.newBuilder().setDisplayName("nome").build())
-                .setFulfillmentText("intencao que fala sobre o nome")
-                .setAllRequiredParamsPresent(true)
-                .build();
     }
 
     @Test
@@ -96,6 +86,16 @@ public class BuilderMessageTest {
 
         Assertions.assertEquals("falta parametros", result);
     }
+
+    private QueryResult createQueryResultWithoutParameters(){
+        return QueryResult
+                .newBuilder()
+                .setIntent(Intent.newBuilder().setDisplayName("nome").build())
+                .setFulfillmentText("intencao que fala sobre o nome")
+                .setAllRequiredParamsPresent(true)
+                .build();
+    }
+
     private QueryResult createQueryResultWithMissingParameters(){
         return QueryResult
                 .newBuilder()
