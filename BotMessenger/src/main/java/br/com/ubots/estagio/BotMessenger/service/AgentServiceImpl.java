@@ -9,19 +9,20 @@ import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.cloud.dialogflow.v2.SessionName;
 import com.google.cloud.dialogflow.v2.SessionsClient;
 import com.google.cloud.dialogflow.v2.TextInput;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
+@NoArgsConstructor
 public class AgentServiceImpl implements AgentService {
+    @Value("${LANGUAGE_CODE}")
+    private String languageCode;
+    @Value("${DIALOGFLOW_PROJECT_ID}")
+    private String projectId;
 
-    private final String languageCode;
-    private final String projectId;
-
-    public AgentServiceImpl(@Value("${LANGUAGE_CODE}")String languageCode, @Value("${DIALOGFLOW_PROJECT_ID}")String projectId) {
-        this.languageCode = languageCode;
-        this.projectId = projectId;
-    }
 
     public QueryResult detectIntentTexts(String text, String sessionId) {
         try (SessionsClient sessionsClient = SessionsClient.create()) {
