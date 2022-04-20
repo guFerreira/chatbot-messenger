@@ -24,8 +24,6 @@ public class AgentServiceImpl implements AgentService {
     @Value("${DIALOGFLOW_PROJECT_ID}")
     private String projectId;
 
-    SessionsClient sessionsClient;
-
     public QueryResult detectIntentTexts(String text, String sessionId) {
         try (SessionsClient sessionsClient = SessionsClient.create()) {
             SessionName session = SessionName.of(projectId, sessionId);
