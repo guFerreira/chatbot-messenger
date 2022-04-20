@@ -31,17 +31,24 @@ public class BuilderMessage {
 
     public String build( String senderId, String receivedMessage){
         try {
-            QueryResult queryResult = agentService.detectIntentTexts(receivedMessage, senderId);
-
-            if (!queryResult.getAllRequiredParamsPresent()){
-                return queryResult.getFulfillmentText();
-            }
-
-            return this.buildMessageByStrategy(queryResult);
+            return this.buildMessage(senderId, receivedMessage);
         }catch (ConsumeApiException consumeApiException){
             return this.messageProblemInDialogflow;
         }
 
+    }
+
+    private String buildMessage(String senderId, String receivedMessage){
+        QueryResult queryResult = agentService.detectIntentTexts(receivedMessage, senderId);
+
+        if (queryResult == null){
+            return this.messageProblemInDialogflow;
+        }
+
+        if (!queryResult.getAllRequiredParamsPresent()){
+            return queryResult.getFulfillmentText();
+        }
+        return this.buildMessageByStrategy(queryResult);
     }
 
     private String buildMessageByStrategy(QueryResult queryResult){

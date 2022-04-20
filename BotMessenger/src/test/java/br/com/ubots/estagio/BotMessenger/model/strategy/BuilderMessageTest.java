@@ -26,6 +26,8 @@ public class BuilderMessageTest {
     @InjectMocks
     private BuilderMessage builderMessage;
 
+    private final String problemMessageComunicationToDialoglow = "Me desculpe, estou com problemas internos na minha mente.\n" +
+            "Tente se comunicar comigo mais tarde.";
     @Test
     public void testBuildMessageByResponseFromDialogflow(){
         QueryResult queryResult = this.createQueryResultWithoutParameters();
@@ -71,11 +73,21 @@ public class BuilderMessageTest {
 
         String result = builderMessage.build("sessionId","text");
 
-        String expectResult = "Me desculpe, estou com problemas internos na minha mente.\n" +
-                "Tente se comunicar comigo mais tarde.";
+        String expectResult = this.problemMessageComunicationToDialoglow;
         Assertions.assertEquals(expectResult, result);
     }
 
+    @Test
+    public void testNullableQueryResultByDialogflow(){
+        QueryResult queryResult = null;
+        Mockito.when(agentService.detectIntentTexts("text","sessionId"))
+                .thenReturn(queryResult);
+
+        String result = builderMessage.build("sessionId","text");
+
+        String expectResult = this.problemMessageComunicationToDialoglow;
+        Assertions.assertEquals(expectResult, result);
+    }
     private QueryResult createQueryResultWithParameters(){
         Struct structCity = Struct
                 .newBuilder()
