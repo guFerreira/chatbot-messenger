@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.Weather;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
@@ -22,6 +23,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @ExtendWith(MockitoExtension.class)
 public class WeatherStrategyTest {
 
@@ -30,6 +33,9 @@ public class WeatherStrategyTest {
 
     @InjectMocks
     WeatherStrategy weatherStrategy;
+
+    private String responseErrorMessageToCallWeatherApi = "Ops! Aconteceu algum erro ao buscar os dados de previsão do tempo. \n" +
+            "Peço desculpas, tente novamente mais tarde!";
 
     @Test
     public void testVerifyTrueIntent(){
@@ -78,6 +84,30 @@ public class WeatherStrategyTest {
 
         Assertions.assertEquals("Na cidade Campinas \uD83C\uDFD9, o clima no dia 20/04/2022 é: Descricao de teste.\n" +
                 " A temperatura minima é de 19.07°C, e a máxima esperada é de 30.3°C. \uD83C\uDF21", result);
+    }
+
+    @Test
+    public void testBuildMessageErrorToGetDataForFutureDate(){
+        String tomorrowDate = new SimpleDateFormat("yyyy-MM-dd").format(this.getTomorrowDate());
+        QueryResult queryResult = this.createQueryResult("Campinas", tomorrowDate);
+        Mockito.when(this.weatherService.getWeatherForecastByCityNameForDays("Campinas"))
+                .thenThrow(new ConsumeApiException("Ocorreu algum erro ao buscar os dados de previsão do tempo na API"));
+
+        String actualMessage = this.weatherStrategy.buildMessage(queryResult);
+
+        assertEquals(this.responseErrorMessageToCallWeatherApi, actualMessage);
+    }
+
+    @Test
+    public void testBuildMessageErrorToGetDataForCurrentDate(){
+        String actualDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        QueryResult queryResult = this.createQueryResult("Campinas", actualDate);
+        Mockito.when(this.weatherService.getCurrentWeatherForecastByCityName("Campinas"))
+                .thenThrow(new ConsumeApiException("Ocorreu algum erro ao buscar os dados de previsão do tempo na API"));
+
+        String actualMessage = this.weatherStrategy.buildMessage(queryResult);
+
+        assertEquals(this.responseErrorMessageToCallWeatherApi, actualMessage);
     }
 
     private QueryResult createQueryResult(String cityName, String date){
