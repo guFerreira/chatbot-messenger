@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.exceptions;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.InformationForReplyMessageException;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,17 @@ public class ApiExceptionHandler {
 
         ErrorMessage error = this.buildErrorMessage(HttpStatus.BAD_REQUEST.value(),
                 "Erro ao tentar enviar uma resposta",
+                e.getMessage(),
+                request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InformationForReplyMessageException.class)
+    public ResponseEntity<ErrorMessage> informationForReplyMessageException (InformationForReplyMessageException e, HttpServletRequest request){
+
+        ErrorMessage error = this.buildErrorMessage(HttpStatus.BAD_REQUEST.value(),
+                "Informações da mensagem recebida do usuário inválidas",
                 e.getMessage(),
                 request.getRequestURI());
 
