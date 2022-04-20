@@ -33,8 +33,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
         try{
             return this.createWeatherForecastMessage(cityName, date);
         }catch (ConsumeApiException consumeApiException){
-            return "Ops! Aconteceu algum erro ao buscar os dados de previsão do tempo. \n" +
-                    "Peço desculpas, tente novamente mais tarde!";
+            return this.getErrorMessageWhenFetchingWeatherForecast();
         }
 
     }
@@ -111,8 +110,10 @@ public class WeatherStrategy implements MessageCreationStrategy {
         return "Desculpe, não foi possível encontrar uma previsão do tempo pela data informada :(";
     }
 
-
-    private String getEmojiThermometer() {
+    private String getErrorMessageWhenFetchingWeatherForecast(){
+        return "Ops! Aconteceu algum erro ao buscar os dados de previsão do tempo. \n" +
+                "Peço desculpas, tente novamente mais tarde!";
+    }    private String getEmojiThermometer() {
         return "\uD83C\uDF21";
     }
 

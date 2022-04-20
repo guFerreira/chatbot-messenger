@@ -1,11 +1,11 @@
 package br.com.ubots.estagio.BotMessenger.controller;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.InformationForReplyMessageException;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.TokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -113,32 +113,73 @@ public class MessageControllerTest {
 
     }
 
+    @Test
+    public void testReceiveInformationSenderIdInvalid() throws Exception {
+        EventRequest eventRequest = this.createEventRequest();
+        String errorMessage = "A informação senderId recebida é inválida";
+        when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage()))
+                .thenThrow(new InformationForReplyMessageException("A informação senderId recebida é inválida"));
+
+        mvc.perform(post("/webhook")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventRequest))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof InformationForReplyMessageException))
+                .andExpect(result -> assertEquals(errorMessage, result.getResolvedException().getMessage()));
+
+    }
+
+    @Test
+    public void testReceiveInformationReceivedMessageInvalid() throws Exception {
+        EventRequest eventRequest = this.createEventRequest();
+        String errorMessage = "A informação receivedMessage recebida é inválida";
+        when(messageService.sendMessage(eventRequest.getSenderId(), eventRequest.getTextMessage()))
+                .thenThrow(new InformationForReplyMessageException("A informação receivedMessage recebida é inválida"));
+
+        mvc.perform(post("/webhook")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventRequest))
+                        .characterEncoding("utf-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof InformationForReplyMessageException))
+                .andExpect(result -> assertEquals(errorMessage, result.getResolvedException().getMessage()));
+
+    }
+
     private EventRequest createEventRequest(){
-        EventMessage eventMessage = EventMessage.builder()
+        EventRequest eventRequest = EventRequest
+                .builder()
+                .entry(this.createListEntries())
+                .build();
+
+        return eventRequest;
+    }
+
+    private List<Entry> createListEntries(){
+        List<Entry> entries = new ArrayList<>();
+        entries.add(this.createEntry());
+        return entries;
+    }
+    private Entry createEntry(){
+        return Entry.builder().id("1").time("time")
+                .messaging(this.createListEventMessages()).build();
+    }
+    private List<EventMessage> createListEventMessages(){
+        List<EventMessage> eventMessages = new ArrayList<>();
+        eventMessages.add(this.createEventMessage());
+        return eventMessages;
+    }
+    private EventMessage createEventMessage(){
+        return EventMessage.builder()
+                .sender(new Sender("123"))
                 .message(new Message("123", "Mensagem de teste"))
                 .field("teste")
                 .recipient(new Recipient("123"))
                 .timestamp("timestamp")
                 .value(new Value(new Sender("123")))
                 .build();
-
-        List<EventMessage> eventMessages = new ArrayList<>();
-        eventMessages.add(eventMessage);
-
-        Entry entry = Entry
-                .builder()
-                .id("1")
-                .time("time")
-                .messaging(eventMessages)
-                .build();
-
-        List<Entry> entries = new ArrayList<>();
-
-        EventRequest eventRequest = EventRequest
-                .builder()
-                .entry(entries)
-                .build();
-
-        return eventRequest;
     }
+
+
 }

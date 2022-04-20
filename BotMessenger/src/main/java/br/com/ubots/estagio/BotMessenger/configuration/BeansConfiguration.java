@@ -13,8 +13,4 @@ public class BeansConfiguration {
         return new RestTemplate();
     }
 
-//    @Bean
-//    public BuilderMessage builderMessage() {
-//        return new BuilderMessage();
-//    }
 }
