@@ -3,7 +3,7 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.Weather;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
-import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
+import br.com.ubots.estagio.BotMessenger.model.weatherbit.LocalityWeatherForecast;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.protobuf.ListValue;
@@ -179,7 +179,7 @@ public class WeatherStrategyTest {
         return tomorowDate;
     }
 
-    private WeatherForecastDto createWeatherForecastDto(String date){
+    private LocalityWeatherForecast createWeatherForecastDto(String date){
         WeatherForecast weatherForecast = WeatherForecast
                 .builder()
                 .temperatureMax(30.3f).temperatureMin(19.07f).date(date)
@@ -187,7 +187,7 @@ public class WeatherStrategyTest {
                 .build();
         List<WeatherForecast> weatherForecasts = new ArrayList<>();
         weatherForecasts.add(weatherForecast);
-        return WeatherForecastDto.builder().city("Campinas")
+        return LocalityWeatherForecast.builder().city("Campinas")
                 .weatherForecast(weatherForecasts).build();
     }
 }

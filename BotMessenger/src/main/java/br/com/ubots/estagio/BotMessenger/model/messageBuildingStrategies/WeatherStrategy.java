@@ -2,7 +2,7 @@ package br.com.ubots.estagio.BotMessenger.model.strategy;
 
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
-import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
+import br.com.ubots.estagio.BotMessenger.model.weatherbit.LocalityWeatherForecast;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import com.google.protobuf.ListValue;
@@ -79,7 +79,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
     }
 
     private String buildWeatherForecastMessageBySpecificDate(String cityName, String date) {
-        WeatherForecastDto weatherForecastDto = this.weatherService.getWeatherForecastByCityNameForDays(cityName);
+        LocalityWeatherForecast weatherForecastDto = this.weatherService.getWeatherForecastByCityNameForDays(cityName);
         Optional<WeatherForecast> weatherForecast = this.getWeatherForecastByDate(weatherForecastDto, date);
 
         if (weatherForecast.isPresent())
@@ -88,7 +88,7 @@ public class WeatherStrategy implements MessageCreationStrategy {
         return this.fallbackNotFoundWeatherForecastByDate();
     }
 
-    private Optional<WeatherForecast> getWeatherForecastByDate(WeatherForecastDto weatherForecastDto, String date) {
+    private Optional<WeatherForecast> getWeatherForecastByDate(LocalityWeatherForecast weatherForecastDto, String date) {
         Optional<WeatherForecast> weatherForecast = weatherForecastDto.getWeatherForecast().stream()
                 .filter(wf -> wf.getDate().equals(date))
                 .findFirst();
