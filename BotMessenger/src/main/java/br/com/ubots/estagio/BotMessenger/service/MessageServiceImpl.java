@@ -2,6 +2,7 @@ package br.com.ubots.estagio.BotMessenger.service;
 
 import br.com.ubots.estagio.BotMessenger.dto.PostMessageDTO;
 import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.InformationForReplyMessageException;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import br.com.ubots.estagio.BotMessenger.model.*;
 import br.com.ubots.estagio.BotMessenger.model.strategy.*;
@@ -30,6 +31,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public int sendMessage(String senderId, String receivedMessage) {
+        this.validateInformationsBySendMessage(senderId, receivedMessage);
         PostMessageResponseDTO messageResponse = this.createMessageResponse(senderId, receivedMessage);
 
         ResponseEntity responseEntity = restTemplate.postForEntity(facebookUrlApi + verifyToken, messageResponse, PostMessageResponseDTO.class);
@@ -38,6 +40,19 @@ public class MessageServiceImpl implements MessageService {
             throw new ResponseMessageException("A resposta enviada ao messenger não foi aceita com sucesso");
         }
         return responseEntity.getStatusCodeValue();
+    }
+
+    private void validateInformationsBySendMessage(String senderId, String receivedMessage) {
+        if (this.validateInformationForSendMessage(senderId)){
+            throw new InformationForReplyMessageException("A informação senderId recebida é inválida");
+        }
+        if (this.validateInformationForSendMessage(receivedMessage)){
+            throw new InformationForReplyMessageException("A informação receivedMessage recebida é inválida");
+        }
+    }
+
+    private boolean validateInformationForSendMessage(String information){
+        return information == null || information.equals("");
     }
 
     private PostMessageResponseDTO createMessageResponse(String senderId, String receivedMessage){
