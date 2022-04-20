@@ -5,7 +5,7 @@ import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.InformationForReplyMessageException;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import br.com.ubots.estagio.BotMessenger.model.*;
-import br.com.ubots.estagio.BotMessenger.model.strategy.*;
+import br.com.ubots.estagio.BotMessenger.model.messageBuildingStrategies.*;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

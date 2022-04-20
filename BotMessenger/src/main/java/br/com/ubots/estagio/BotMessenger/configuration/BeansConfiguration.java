@@ -1,6 +1,5 @@
 package br.com.ubots.estagio.BotMessenger.configuration;
 
-import br.com.ubots.estagio.BotMessenger.model.strategy.BuilderMessage;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

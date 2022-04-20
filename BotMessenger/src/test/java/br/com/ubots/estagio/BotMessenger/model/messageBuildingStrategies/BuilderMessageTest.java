@@ -1,4 +1,4 @@
-package br.com.ubots.estagio.BotMessenger.model.strategy;
+package br.com.ubots.estagio.BotMessenger.model.messageBuildingStrategies;
 
 
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;

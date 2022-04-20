@@ -1,7 +1,7 @@
 package br.com.ubots.estagio.BotMessenger.service;
 
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
-import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
+import br.com.ubots.estagio.BotMessenger.model.weatherbit.LocalityWeatherForecast;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,10 +48,10 @@ public class WeatherServiceTest {
 
     @Test
     public void testWeatherForecastByCityNameForDaysReturnsObjectByApi() {
-        Mockito.when(restTemplate.getForEntity(urlDaily, WeatherForecastDto.class))
-                .thenReturn(ResponseEntity.ok(WeatherForecastDto.builder().city(this.city).build()));
+        Mockito.when(restTemplate.getForEntity(urlDaily, LocalityWeatherForecast.class))
+                .thenReturn(ResponseEntity.ok(LocalityWeatherForecast.builder().city(this.city).build()));
 
-        WeatherForecastDto weatherForecastDto = weatherService.getWeatherForecastByCityNameForDays("Campinas");
+        LocalityWeatherForecast weatherForecastDto = weatherService.getWeatherForecastByCityNameForDays("Campinas");
 
         Assertions.assertEquals(city, weatherForecastDto.getCity());
 
@@ -59,7 +59,7 @@ public class WeatherServiceTest {
 
     @Test
     public void testErrorGetDataFromApiWeatherForecastByDays() {
-        Mockito.when(restTemplate.getForEntity(urlDaily, WeatherForecastDto.class))
+        Mockito.when(restTemplate.getForEntity(urlDaily, LocalityWeatherForecast.class))
                 .thenReturn(ResponseEntity.badRequest().build());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -74,7 +74,7 @@ public class WeatherServiceTest {
 
     @Test
     public void testGetCurrentWeatherForecastByCityNameReturnsObjectByApi() {
-        Mockito.when(restTemplate.getForEntity(urlCurrent, WeatherForecastDto.class))
+        Mockito.when(restTemplate.getForEntity(urlCurrent, LocalityWeatherForecast.class))
                 .thenReturn(ResponseEntity.ok(this.createWeatherForecastDto()));
 
         WeatherForecast weatherForecast = weatherService.getCurrentWeatherForecastByCityName("Campinas");
@@ -84,7 +84,7 @@ public class WeatherServiceTest {
 
     @Test
     public void testErrorGetDataFromApiByCurrentWeatherForecast() {
-        Mockito.when(restTemplate.getForEntity(urlCurrent, WeatherForecastDto.class))
+        Mockito.when(restTemplate.getForEntity(urlCurrent, LocalityWeatherForecast.class))
                 .thenReturn(ResponseEntity.badRequest().build());
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -97,11 +97,11 @@ public class WeatherServiceTest {
 
     }
 
-    private WeatherForecastDto createWeatherForecastDto(){
+    private LocalityWeatherForecast createWeatherForecastDto(){
         List<WeatherForecast> weatherForecasts = new ArrayList<>();
         weatherForecasts.add(WeatherForecast.builder().temp(10.2f).build());
 
-        WeatherForecastDto weatherForecastDto = WeatherForecastDto.builder().weatherForecast(weatherForecasts).build();
+        LocalityWeatherForecast weatherForecastDto = LocalityWeatherForecast.builder().weatherForecast(weatherForecasts).build();
         return weatherForecastDto;
     }
 

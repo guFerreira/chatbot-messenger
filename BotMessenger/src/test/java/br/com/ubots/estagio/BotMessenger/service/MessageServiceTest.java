@@ -5,7 +5,7 @@ import br.com.ubots.estagio.BotMessenger.dto.PostMessageResponseDTO;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.InformationForReplyMessageException;
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ResponseMessageException;
 import br.com.ubots.estagio.BotMessenger.model.Recipient;
-import br.com.ubots.estagio.BotMessenger.model.strategy.BuilderMessage;
+import br.com.ubots.estagio.BotMessenger.model.messageBuildingStrategies.BuilderMessage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

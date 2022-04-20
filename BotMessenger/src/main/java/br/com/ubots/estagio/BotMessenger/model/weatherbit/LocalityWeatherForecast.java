@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WeatherForecastDto {
+public class LocalityWeatherForecast {
     @JsonProperty("city_name")
     private String city;
 

@@ -2,13 +2,12 @@ package br.com.ubots.estagio.BotMessenger.service;
 
 import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecast;
-import br.com.ubots.estagio.BotMessenger.model.weatherbit.WeatherForecastDto;
+import br.com.ubots.estagio.BotMessenger.model.weatherbit.LocalityWeatherForecast;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.Normalizer;
@@ -28,11 +27,11 @@ public class WeatherServiceImpl implements WeatherService {
     private final RestTemplate restTemplate;
 
     @Override
-    public WeatherForecastDto getWeatherForecastByCityNameForDays(String cityName) {
+    public LocalityWeatherForecast getWeatherForecastByCityNameForDays(String cityName) {
         String urlWithParameters = urlWeatherbitDailyApi + this.createParametersForUrl(cityName);
 
-        ResponseEntity<WeatherForecastDto> weatherForecastEntity = restTemplate
-                .getForEntity(urlWithParameters, WeatherForecastDto.class);
+        ResponseEntity<LocalityWeatherForecast> weatherForecastEntity = restTemplate
+                .getForEntity(urlWithParameters, LocalityWeatherForecast.class);
 
         this.checkErrorGetDataFromApi(weatherForecastEntity.getStatusCodeValue());
         return weatherForecastEntity.getBody();
@@ -42,7 +41,7 @@ public class WeatherServiceImpl implements WeatherService {
     public WeatherForecast getCurrentWeatherForecastByCityName(String cityName) {
         String urlWithParameters = urlWeatherbitCurrentApi + this.createParametersForUrl(cityName);
 
-        ResponseEntity<WeatherForecastDto> weatherForecastEntity = restTemplate.getForEntity(urlWithParameters, WeatherForecastDto.class);
+        ResponseEntity<LocalityWeatherForecast> weatherForecastEntity = restTemplate.getForEntity(urlWithParameters, LocalityWeatherForecast.class);
 
         this.checkErrorGetDataFromApi(weatherForecastEntity.getStatusCodeValue());
         return weatherForecastEntity.getBody().getWeatherForecast().get(0);

@@ -1,4 +1,4 @@
-package br.com.ubots.estagio.BotMessenger.model.strategy;
+package br.com.ubots.estagio.BotMessenger.model.messageBuildingStrategies;
 
 import com.google.cloud.dialogflow.v2.QueryResult;
 
