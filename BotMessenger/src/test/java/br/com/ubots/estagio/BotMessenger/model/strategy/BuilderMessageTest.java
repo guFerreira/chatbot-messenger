@@ -1,6 +1,7 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.service.AgentServiceImpl;
 import com.google.cloud.dialogflow.v2.Intent;
 import com.google.cloud.dialogflow.v2.QueryResult;
@@ -60,6 +61,19 @@ public class BuilderMessageTest {
         String result = builderMessage.build("sessionId","text");
 
         Assertions.assertEquals("falta parametros", result);
+    }
+
+    @Test
+    public void testBuildMessageErrorDialogflowComunication(){
+        QueryResult queryResult = this.createQueryResultWithMissingParameters();
+        Mockito.when(agentService.detectIntentTexts("text","sessionId"))
+                .thenThrow(new ConsumeApiException(""));
+
+        String result = builderMessage.build("sessionId","text");
+
+        String expectResult = "Me desculpe, estou com problemas internos na minha mente.\n" +
+                "Tente se comunicar comigo mais tarde.";
+        Assertions.assertEquals(expectResult, result);
     }
 
     private QueryResult createQueryResultWithParameters(){

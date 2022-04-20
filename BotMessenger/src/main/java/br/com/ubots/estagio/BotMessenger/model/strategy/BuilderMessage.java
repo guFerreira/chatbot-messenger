@@ -1,5 +1,6 @@
 package br.com.ubots.estagio.BotMessenger.model.strategy;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.AgentService;
 import com.google.cloud.dialogflow.v2.QueryResult;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,8 @@ public class BuilderMessage {
 
     private final WeatherStrategy weatherStrategy;
 
+    private final String messageProblemInDialogflow = "Me desculpe, estou com problemas internos na minha mente.\n" +
+            "Tente se comunicar comigo mais tarde.";
     public BuilderMessage(AgentService agentService, WeatherStrategy weatherStrategy) {
         this.agentService = agentService;
         this.weatherStrategy = weatherStrategy;
@@ -27,13 +30,17 @@ public class BuilderMessage {
     }
 
     public String build( String senderId, String receivedMessage){
-        QueryResult queryResult = agentService.detectIntentTexts(receivedMessage, senderId);
+        try {
+            QueryResult queryResult = agentService.detectIntentTexts(receivedMessage, senderId);
 
-        if (!queryResult.getAllRequiredParamsPresent()){
-            return queryResult.getFulfillmentText();
+            if (!queryResult.getAllRequiredParamsPresent()){
+                return queryResult.getFulfillmentText();
+            }
+
+            return this.buildMessageByStrategy(queryResult);
+        }catch (ConsumeApiException consumeApiException){
+            return this.messageProblemInDialogflow;
         }
-
-        return this.buildMessageByStrategy(queryResult);
 
     }
 

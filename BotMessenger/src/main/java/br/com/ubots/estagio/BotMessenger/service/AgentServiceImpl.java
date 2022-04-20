@@ -2,6 +2,7 @@ package br.com.ubots.estagio.BotMessenger.service;
 
 import java.io.IOException;
 
+import br.com.ubots.estagio.BotMessenger.exceptions.exception.ConsumeApiException;
 import br.com.ubots.estagio.BotMessenger.service.interfaces.AgentService;
 import com.google.cloud.dialogflow.v2.DetectIntentResponse;
 import com.google.cloud.dialogflow.v2.QueryInput;
@@ -23,6 +24,7 @@ public class AgentServiceImpl implements AgentService {
     @Value("${DIALOGFLOW_PROJECT_ID}")
     private String projectId;
 
+    SessionsClient sessionsClient;
 
     public QueryResult detectIntentTexts(String text, String sessionId) {
         try (SessionsClient sessionsClient = SessionsClient.create()) {
@@ -34,7 +36,7 @@ public class AgentServiceImpl implements AgentService {
             return response.getQueryResult();
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ConsumeApiException(e.getMessage());
         }
     }
 
