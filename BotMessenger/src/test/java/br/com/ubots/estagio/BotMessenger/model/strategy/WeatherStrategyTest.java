@@ -76,13 +76,14 @@ public class WeatherStrategyTest {
     @Test
     public void testBuildMessageWeatherForecastForFutureDate(){
         String tomorrowDate = new SimpleDateFormat("yyyy-MM-dd").format(this.getTomorrowDate());
+        String dateExibitionForUser = new SimpleDateFormat("dd/MM/yyyy").format(this.getTomorrowDate());
         QueryResult queryResult = this.createQueryResult("Campinas", tomorrowDate);
         Mockito.when(this.weatherService.getWeatherForecastByCityNameForDays("Campinas"))
                 .thenReturn(this.createWeatherForecastDto(tomorrowDate));
 
         String result = this.weatherStrategy.buildMessage(queryResult);
 
-        Assertions.assertEquals("Na cidade Campinas \uD83C\uDFD9, o clima no dia 20/04/2022 é: Descricao de teste.\n" +
+        Assertions.assertEquals("Na cidade Campinas \uD83C\uDFD9, o clima no dia "+dateExibitionForUser+" é: Descricao de teste.\n" +
                 " A temperatura minima é de 19.07°C, e a máxima esperada é de 30.3°C. \uD83C\uDF21", result);
     }
 
@@ -94,7 +95,6 @@ public class WeatherStrategyTest {
                 .thenThrow(new ConsumeApiException("Ocorreu algum erro ao buscar os dados de previsão do tempo na API"));
 
         String actualMessage = this.weatherStrategy.buildMessage(queryResult);
-
         assertEquals(this.responseErrorMessageToCallWeatherApi, actualMessage);
     }
 
@@ -108,6 +108,20 @@ public class WeatherStrategyTest {
         String actualMessage = this.weatherStrategy.buildMessage(queryResult);
 
         assertEquals(this.responseErrorMessageToCallWeatherApi, actualMessage);
+    }
+
+    @Test
+    public void testBuildMessageNotFoundWeatherForecastByDate(){
+        String actualDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String tomorrowDate = new SimpleDateFormat("yyyy-MM-dd").format(this.getTomorrowDate());
+        QueryResult queryResult = this.createQueryResult("Campinas", tomorrowDate);
+        Mockito.when(this.weatherService.getWeatherForecastByCityNameForDays("Campinas"))
+                .thenReturn(this.createWeatherForecastDto(actualDate));
+
+        String actualMessage = this.weatherStrategy.buildMessage(queryResult);
+
+        String expectMessage = "Desculpe, não foi possível encontrar uma previsão do tempo pela data informada :(";
+        assertEquals(expectMessage, actualMessage);
     }
 
     private QueryResult createQueryResult(String cityName, String date){
